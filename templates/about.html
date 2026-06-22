@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover the science behind fingerprint biometrics and its correlation with genetic traits like blood group types.">
+    <title>About - Automated Blood Group Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-title-container">
+                <h1 id="main-title">Automated Blood Group Detection</h1>
+            </div>
+            <nav>
+                <div class="nav-links">
+                    <a href="/" id="nav-home">Home</a>
+                    <a href="/about" class="active" id="nav-about">About</a>
+                </div>
+                <div class="nav-links">
+                    {% if session.get('user_id') %}
+                        <a href="/predict_blood_group" class="highlight-btn" id="nav-predict">Predict Group</a>
+                        <a href="/logout" id="nav-logout">Logout</a>
+                    {% else %}
+                        <a href="/login" id="nav-login">Login</a>
+                        <a href="/signup" id="nav-signup" class="highlight-btn">Sign Up</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Hero Tag/Title -->
+        <div style="text-align: center; margin-bottom: 40px;">
+            <span class="hero-tag" style="background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.3); color: var(--accent-blue);">The Science</span>
+            <h2 style="font-size: 2.5rem; font-weight: 800; margin-top: 15px;">Biometrics & Genetics</h2>
+        </div>
+
+        <!-- Section 1: Fingerprint Uniqueness -->
+        <section class="info-grid">
+            <div class="info-content-card card">
+                <h3 style="color: var(--accent-blue); margin-bottom: 15px;">The Uniqueness of Fingerprints</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    Fingerprints are unique to each individual, formed by complex ridges and valleys on the skin's surface. Even identical twins possess distinct fingerprints. This individuality arises from both genetic and environmental factors during fetal development, creating an unalterable, lifelong biometric marker.
+                </p>
+                <p style="color: var(--text-secondary);">
+                    Forensic science and identity verification rely heavily on analyzing fingerprint categories (loops, whorls, and arches) and minutiae points due to their permanence and absolute uniqueness.
+                </p>
+            </div>
+            <div class="info-image-card">
+                <img src="{{ url_for('static', filename='y.jpg') }}" alt="Fingerprint patterns analysis graphic">
+                <div class="overlay-tint"></div>
+            </div>
+        </section>
+
+        <!-- Section 2: Biometric Correlation to Blood Types -->
+        <section class="info-grid" style="margin-top: 30px;">
+            <div class="info-image-card">
+                <img src="{{ url_for('static', filename='x.jpg') }}" alt="Fingerprint scanning concept diagram">
+                <div class="overlay-tint"></div>
+            </div>
+            <div class="info-content-card card">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">The Genetic Correlation</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    The correlation between fingerprints and blood groups lies in the genetic underpinnings that influence physical characteristics during embryogenesis. Blood group antigens (A, B, AB, O) are determined by alleles inherited from parents.
+                </p>
+                <p style="color: var(--text-secondary);">
+                    These same genetic markers, along with external factors in the womb, are linked to physical development, including epidermal ridge formations. By mapping these subtle correlations, convolutional neural networks can capture hidden features in fingerprint scans to predict blood group classifications.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 3: Practical Value -->
+        <section class="card" style="margin-top: 40px; background: linear-gradient(135deg, rgba(239, 35, 60, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);">
+            <h3 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 15px; text-align: center;">Practical & Emergency Medical Value</h3>
+            <p style="color: var(--text-secondary); max-width: 800px; margin: 0 auto 20px auto; text-align: center;">
+                Predicting blood groups from fingerprint images holds significant value for both law enforcement and healthcare. In forensic investigations, it provides investigators with quick investigative leads from crime scene latent prints.
+            </p>
+            <p style="color: var(--text-secondary); max-width: 800px; margin: 0 auto; text-align: center;">
+                In medical emergencies where a patient is unconscious and their blood type is unknown, instant fingerprint scan analysis can accelerate screening protocols, helping optimize critical response times prior to formal laboratory typing.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Automated Blood Group Detection. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

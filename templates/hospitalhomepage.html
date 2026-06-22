@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automated Blood Group Detection using fingerprint biometric image processing and convolutional neural networks (CNN).">
+    <title>Automated Blood Group Detection - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-title-container">
+                <h1 id="main-title">Automated Blood Group Detection</h1>
+            </div>
+            <nav>
+                <div class="nav-links">
+                    <a href="/" class="active" id="nav-home">Home</a>
+                    <a href="/about" id="nav-about">About</a>
+                </div>
+                <div class="nav-links">
+                    {% if session.get('user_id') %}
+                        <a href="/predict_blood_group" class="highlight-btn" id="nav-predict">Predict Group</a>
+                        <a href="/logout" id="nav-logout">Logout</a>
+                    {% else %}
+                        <a href="/login" id="nav-login">Login</a>
+                        <a href="/signup" id="nav-signup" class="highlight-btn">Sign Up</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <span class="hero-tag">Biometric Deep Learning</span>
+            <h2>Identify Blood Groups Instantly via Fingerprints</h2>
+            <p>Our automated solution uses state-of-the-art Convolutional Neural Networks (CNN) to predict blood groups from fingerprint patterns, offering quick insights in forensic and medical emergencies.</p>
+            <div>
+                {% if session.get('user_id') %}
+                    <a href="/predict_blood_group" class="btn btn-primary" id="hero-cta-btn">Start Prediction</a>
+                {% else %}
+                    <a href="/login" class="btn btn-primary" id="hero-cta-btn">Get Started</a>
+                {% endif %}
+                <a href="/about" class="btn btn-secondary" style="margin-left: 15px;" id="hero-secondary-btn">Learn More</a>
+            </div>
+        </section>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes" id="alert-messages">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Interactive Layout Section 1 -->
+        <section class="info-grid">
+            <div class="info-content-card card">
+                <h3>Understanding Blood Group Classification</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Blood groups, or blood types, are essential classifications based on the presence or absence of specific antigens on the surface of red blood cells (RBCs). The primary classification systems are the <strong>ABO system</strong> and the <strong>Rh (Rhesus) system</strong>. 
+                </p>
+                <p style="color: var(--text-secondary);">
+                    Understanding these systems is vital in critical medical scenarios like blood transfusions, organ transplantation, and pregnancy management, where incompatibility can trigger severe, life-threatening immune reactions.
+                </p>
+            </div>
+            <div class="info-image-card">
+                <img src="{{ url_for('static', filename='1.jpg') }}" alt="Blood analysis and cell visuals">
+                <div class="overlay-tint"></div>
+            </div>
+        </section>
+
+        <!-- Highlights grid -->
+        <section style="margin-bottom: 40px;">
+            <h3 style="font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Key Biological Systems</h3>
+            <div class="info-grid">
+                <div class="card" style="margin-bottom: 0;">
+                    <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--primary);">The ABO System</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                        Divides blood into four main groups: A, B, AB, and O, depending on whether antigens A and/or B are present on the red blood cell surface.
+                    </p>
+                </div>
+                <div class="card" style="margin-bottom: 0;">
+                    <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--accent-blue);">The Rh Factor</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                        Further categorizes blood into Rh-positive (+) or Rh-negative (-) based on the presence or absence of the D antigen (Rh factor), creating the 8 common blood types.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Layout Section 2 -->
+        <section class="info-grid">
+            <div class="info-image-card">
+                <img src="{{ url_for('static', filename='3.jpg') }}" alt="DNA and science visualization">
+                <div class="overlay-tint"></div>
+            </div>
+            <div class="info-content-card card">
+                <h3>Compatibility & Safe Transfusions</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    During emergency blood transfusions, donor-recipient compatibility is paramount. 
+                    <strong>O Negative (O-)</strong> blood is the universal donor type because it lacks A, B, and Rh antigens, making it safe for almost anyone.
+                </p>
+                <p style="color: var(--text-secondary);">
+                    Conversely, <strong>AB Positive (AB+)</strong> is the universal recipient type, as individuals with this group can safely receive blood from any of the ABO or Rh groups.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Automated Blood Group Detection. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

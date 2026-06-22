@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Group Prediction - Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Specific overlay animation for scanning model loading state */
+        .scanning-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(11, 15, 25, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(8px);
+        }
+        
+        .scanner-line {
+            width: 300px;
+            height: 4px;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            position: absolute;
+            animation: scan 2s infinite ease-in-out;
+        }
+
+        .scanner-box {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 20px;
+        }
+
+        .scanner-box img {
+            max-width: 90%;
+            max-height: 90%;
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-title-container">
+                <h1 id="main-title">Automated Blood Group Detection</h1>
+            </div>
+            <nav>
+                <div class="nav-links">
+                    <a href="/" id="nav-home">Home</a>
+                    <a href="/about" id="nav-about">About</a>
+                </div>
+                <div class="nav-links">
+                    <a href="/predict_blood_group" class="active highlight-btn" id="nav-predict">Predict Group</a>
+                    <a href="/logout" id="nav-logout">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-wrapper" style="display: flex; justify-content: center; align-items: center; padding: 40px 20px;">
+        <div class="card" style="max-width: 550px; width: 100%; text-align: center; margin-bottom: 0;">
+            <span class="hero-tag" style="margin-bottom: 15px;">Model Inference Portal</span>
+            <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px;">Predict Blood Group</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 25px;">Upload a clean fingerprint image. Our trained CNN model will analyze the patterns to identify the blood type.</p>
+            
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="flashes" id="prediction-flashes">
+                {% for category, message in messages %}
+                  <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data" id="predict-form" onsubmit="showScanningOverlay()">
+                <!-- Drag and drop zone -->
+                <div class="upload-zone" id="drop-zone" onclick="triggerFileInput()">
+                    <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="upload-svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    <p id="upload-text">Drag and drop fingerprint image here or <span>browse files</span></p>
+                    <input type="file" name="file" id="imageUpload" accept="image/*" onchange="displayImage(this)">
+                </div>
+
+                <img id="imagePreview" src="" alt="Image Preview">
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;" id="predict-submit-btn">Predict Blood Group</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Scanning / Processing Overlay screen -->
+    <div class="scanning-overlay" id="scanningOverlay">
+        <div class="scanner-box">
+            <img id="scanningImage" src="" alt="Scanning Preview">
+            <div class="scanner-line"></div>
+        </div>
+        <div class="spinner"></div>
+        <h3 style="font-weight: 700; color: #ffffff; letter-spacing: 0.5px;">Analyzing Fingerprint Biometrics...</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Running Convolutional Neural Network inference</p>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Automated Blood Group Detection. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('imageUpload');
+        const uploadText = document.getElementById('upload-text');
+        const imagePreview = document.getElementById('imagePreview');
+        const scanningImage = document.getElementById('scanningImage');
+
+        function triggerFileInput() {
+            fileInput.click();
+        }
+
+        // Drag and drop events
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length) {
+                fileInput.files = files;
+                displayImage(fileInput);
+            }
+        }, false);
+
+        function displayImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    scanningImage.src = e.target.result; // update scanner modal preview
+                    uploadText.innerHTML = `Selected file: <strong>${input.files[0].name}</strong>`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                imagePreview.style.display = 'none';
+                uploadText.innerHTML = `Drag and drop fingerprint image here or <span>browse files</span>`;
+            }
+        }
+
+        function showScanningOverlay() {
+            if (fileInput.files && fileInput.files[0]) {
+                document.getElementById('scanningOverlay').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>

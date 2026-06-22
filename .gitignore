@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Database files
+users.db
+
+# Flask upload folders
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Large PyTorch model weights (exceeds GitHub's 100MB file limit)
+fingerprint_blood_group_model.pth

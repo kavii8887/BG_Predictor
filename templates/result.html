@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result - Automated Blood Group Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-title-container">
+                <h1 id="main-title">Automated Blood Group Detection</h1>
+            </div>
+            <nav>
+                <div class="nav-links">
+                    <a href="/" id="nav-home">Home</a>
+                    <a href="/about" id="nav-about">About</a>
+                </div>
+                <div class="nav-links">
+                    <a href="/predict_blood_group" class="highlight-btn" id="nav-predict">Predict Group</a>
+                    <a href="/logout" id="nav-logout">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-wrapper" style="display: flex; justify-content: center; align-items: center; padding: 40px 20px;">
+        <div class="result-container card">
+            <span class="hero-tag" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #10b981;">Scan Complete</span>
+            <h2 style="font-size: 1.8rem; font-weight: 700; margin-top: 10px; margin-bottom: 20px;">Detection Result</h2>
+            
+            <div class="result-card">
+                <div class="result-badge-outer">
+                    <div class="result-badge-pulse"></div>
+                    <div class="result-badge" id="detected-blood-group">{{ blood_group }}</div>
+                </div>
+
+                <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 10px;">The CNN model predicted the blood type as:</p>
+                <h3 style="font-size: 2.2rem; font-weight: 800; color: #ffffff; margin-bottom: 30px;">Type {{ blood_group }}</h3>
+
+                <!-- Compatibility Grid -->
+                <div class="compatibility-info">
+                    <div class="compatibility-title">Transfusion Compatibility Details</div>
+                    <div class="compatibility-grid">
+                        <div class="compat-card">
+                            <h4>Can Donate To</h4>
+                            <p id="donate-to">-</p>
+                        </div>
+                        <div class="compat-card">
+                            <h4>Can Receive From</h4>
+                            <p id="receive-from">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 35px; display: flex; gap: 15px; width: 100%;">
+                    <a href="/predict_blood_group" class="btn btn-primary" style="flex: 1;" id="btn-scan-again">Scan Another Print</a>
+                    <a href="/" class="btn btn-secondary" style="flex: 1;" id="btn-home">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Automated Blood Group Detection. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const bloodType = document.getElementById("detected-blood-group").innerText.trim();
+            const donateToField = document.getElementById("donate-to");
+            const receiveFromField = document.getElementById("receive-from");
+
+            const matrix = {
+                "A+": { give: "A+, AB+", receive: "A+, A-, O+, O-" },
+                "A-": { give: "A+, A-, AB+, AB-", receive: "A-, O-" },
+                "B+": { give: "B+, AB+", receive: "B+, B-, O+, O-" },
+                "B-": { give: "B+, B-, AB+, AB-", receive: "B-, O-" },
+                "AB+": { give: "AB+", receive: "Everyone (Universal Recipient)" },
+                "AB-": { give: "AB+, AB-", receive: "A-, B-, AB-, O-" },
+                "O+": { give: "O+, A+, B+, AB+", receive: "O+, O-" },
+                "O-": { give: "Everyone (Universal Donor)", receive: "O-" }
+            };
+
+            if (matrix[bloodType]) {
+                donateToField.innerText = matrix[bloodType].give;
+                receiveFromField.innerText = matrix[bloodType].receive;
+            } else {
+                donateToField.innerText = "N/A";
+                receiveFromField.innerText = "N/A";
+            }
+        });
+    </script>
+</body>
+</html>
